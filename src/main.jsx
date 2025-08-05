@@ -59,7 +59,7 @@ import AllPosts from "./pages/AllPost";
             ),
         },
         {
-            path: "/edit-post/",
+            path: "/edit-post/:slug",
             element: (
                 <AuthLayout authentication>
                     {" "}

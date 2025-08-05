@@ -74,7 +74,7 @@ function Login() {
                 />
                 <Button
                 type="submit"
-                className="w-full"
+                className="w-full rounded-2xl bg-blue-600 text-white text-lg py-2 px-2 font-bold hover:bg-blue-500"
                 >Sign in</Button>
             </div>
         </form>
