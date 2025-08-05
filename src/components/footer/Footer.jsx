@@ -4,153 +4,82 @@ import Logo from '../Logo'
 
 function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 border-t border-white/20">
-      {/* Animated background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-900/30 via-purple-900/30 to-pink-900/30 animate-pulse"></div>
-      
-      {/* Glass morphism effect */}
-      <div className="absolute inset-0 backdrop-blur-sm bg-white/5"></div>
-      
-      {/* Top gradient line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
-      
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
-          
-          {/* Logo and Brand Section */}
-          <div className="lg:col-span-5 flex flex-col justify-between">
-            <div className="space-y-6">
-              {/* Logo Container */}
-              <div className="flex items-center space-x-4">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm border border-white/30 shadow-lg">
-                  <Logo width="60px" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                    BlogWorld
-                  </h2>
-                  <p className="text-sm text-white/70 font-medium">Share Your Stories</p>
-                </div>
-              </div>
-              
-              {/* Description */}
-              <p className="text-white/80 leading-relaxed max-w-md">
-                Express yourself through powerful storytelling. Join our community of writers and readers who believe every story matters.
-              </p>
-              
-              {/* Social Links */}
-              <div className="flex space-x-4">
-                {['twitter', 'facebook', 'instagram', 'linkedin'].map((social) => (
-                  <a
-                    key={social}
-                    href="#"
-                    className="group relative p-2 rounded-lg bg-gradient-to-r from-white/10 to-white/20 backdrop-blur-sm border border-white/30 hover:from-white/20 hover:to-white/30 transition-all duration-300 hover:scale-110"
-                  >
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400/0 to-pink-400/0 transition-all duration-300 group-hover:from-blue-400/20 group-hover:to-pink-400/20 blur-xl"></div>
-                    <div className="relative w-5 h-5 bg-white/70"></div>
-                  </a>
-                ))}
-              </div>
-            </div>
-            
-            {/* Copyright */}
-            <div className="mt-8 pt-6 border-t border-white/20">
-              <p className="text-sm text-white/60">
-                &copy; Copyright 2023. All Rights Reserved by{' '}
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-semibold">
-                  BlogWorld
-                </span>
-              </p>
-            </div>
+    <footer className=" w-full bg-white border-t border-gray-200 shadow-lg z-50">
+      <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between">
+        {/* Left: Logo & Brand */}
+        <div className="flex items-center space-x-3 mb-4 md:mb-0">
+          <Logo width="40px" />
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">BlogWorld</h2>
+            <p className="text-xs text-gray-500">Share Your Stories</p>
           </div>
-          
-          {/* Company Section */}
-          <div className="lg:col-span-2">
-            <div className="space-y-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
-                Company
-              </h3>
-              <ul className="space-y-4">
-                {['Features', 'Pricing', 'Affiliate Program', 'Press Kit'].map((item) => (
-                  <li key={item}>
-                    <Link
-                      className="group relative text-white/80 hover:text-white transition-all duration-300 font-medium"
-                      to="/"
-                    >
-                      <span className="relative z-10">{item}</span>
-                      <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 transition-all duration-300 group-hover:w-full"></div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        </div>
+
+        {/* Center: Links */}
+        <div className="flex flex-col md:flex-row md:space-x-10 space-y-2 md:space-y-0 items-center">
+          <div>
+            <h3 className="text-xs font-semibold text-gray-600 mb-1">Company</h3>
+            <ul className="flex space-x-4">
+              {['Features', 'Pricing', 'Affiliate', 'Press'].map((item) => (
+                <li key={item}>
+                  <Link className="text-sm text-gray-700 hover:text-blue-600 transition" to="/">
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          
-          {/* Support Section */}
-          <div className="lg:col-span-2">
-            <div className="space-y-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
-                Support
-              </h3>
-              <ul className="space-y-4">
-                {['Account', 'Help', 'Contact Us', 'Customer Support'].map((item) => (
-                  <li key={item}>
-                    <Link
-                      className="group relative text-white/80 hover:text-white transition-all duration-300 font-medium"
-                      to="/"
-                    >
-                      <span className="relative z-10">{item}</span>
-                      <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 transition-all duration-300 group-hover:w-full"></div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div>
+            <h3 className="text-xs font-semibold text-gray-600 mb-1">Support</h3>
+            <ul className="flex space-x-4">
+              {['Account', 'Help', 'Contact', 'Support'].map((item) => (
+                <li key={item}>
+                  <Link className="text-sm text-gray-700 hover:text-blue-600 transition" to="/">
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          
-          {/* Legal Section */}
-          <div className="lg:col-span-3">
-            <div className="space-y-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider bg-gradient-to-r from-pink-300 to-red-300 bg-clip-text text-transparent">
-                Legal
-              </h3>
-              <ul className="space-y-4">
-                {['Terms & Conditions', 'Privacy Policy', 'Licensing'].map((item) => (
-                  <li key={item}>
-                    <Link
-                      className="group relative text-white/80 hover:text-white transition-all duration-300 font-medium"
-                      to="/"
-                    >
-                      <span className="relative z-10">{item}</span>
-                      <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-pink-400 to-red-400 transition-all duration-300 group-hover:w-full"></div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              
-              {/* Newsletter Signup */}
-              <div className="mt-8 p-4 rounded-xl bg-gradient-to-r from-white/10 to-white/20 backdrop-blur-sm border border-white/30">
-                <h4 className="text-white font-semibold mb-2">Stay Updated</h4>
-                <p className="text-white/70 text-sm mb-3">Get the latest stories delivered to your inbox.</p>
-                <div className="flex">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="flex-1 px-3 py-2 bg-white/10 border border-white/30 rounded-l-lg text-white placeholder-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-white/50"
-                  />
-                  <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-r-lg text-white font-medium text-sm hover:from-blue-600 hover:to-purple-600 transition-all duration-300">
-                    Subscribe
-                  </button>
-                </div>
-              </div>
-            </div>
+          <div>
+            <h3 className="text-xs font-semibold text-gray-600 mb-1">Legal</h3>
+            <ul className="flex space-x-4">
+              {['Terms', 'Privacy', 'Licensing'].map((item) => (
+                <li key={item}>
+                  <Link className="text-sm text-gray-700 hover:text-blue-600 transition" to="/">
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Right: Newsletter & Social */}
+        <div className="flex flex-col items-end space-y-2">
+          <form className="flex">
+            <input
+              type="email"
+              placeholder="Your email"
+              className="px-2 py-1 border border-gray-300 rounded-l text-sm focus:outline-none"
+            />
+            <button className="px-3 py-1 bg-blue-600 text-white rounded-r text-sm hover:bg-blue-700 transition">
+              Subscribe
+            </button>
+          </form>
+          <div className="flex space-x-2">
+            {['twitter', 'facebook', 'instagram', 'linkedin'].map((social) => (
+              <a key={social} href="#" className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center hover:bg-blue-500 transition">
+                {/* Placeholder for social icon */}
+                <span className="text-xs text-gray-600">{social[0].toUpperCase()}</span>
+              </a>
+            ))}
           </div>
         </div>
       </div>
-      
-      {/* Floating decorative elements */}
-      <div className="absolute top-10 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-xl animate-pulse"></div>
-      <div className="absolute bottom-10 right-10 w-32 h-32 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 blur-xl animate-pulse"></div>
+      <div className="text-center text-xs text-gray-400 py-2 bg-gray-50 border-t border-gray-100">
+        &copy; 2023 BlogWorld. All Rights Reserved.
+      </div>
     </footer>
   )
 }

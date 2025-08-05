@@ -11,22 +11,19 @@ function PostForm({ post }) {
             title: post?.title || '',
             slug: post?.slug || '',
             content: post?.content || '',
-            status: post?.status || 'active', // Fixed: provide default value
+            status: post?.status || 'active',
         },
     })
 
     const navigate = useNavigate();
     const userData = useSelector(state => state.auth.userData)
-    console.log(userData);
-
+    console.log("User data in PostForm:", userData);
     const submit = async (data) => {
         try {
             if (post) {
-                console.log(post + "sdg");
-
+                
                 const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null
-                console.log(file);
-
+                console.log("Uploaded file:", file);
                 if (file) {
                     appwriteService.deleteFile(post.featuredimage)
                 }
@@ -41,18 +38,14 @@ function PostForm({ post }) {
                 }
             } else {
                 const file = await appwriteService.uploadFile(data.image[0])
-                // console.log(file);
-
+                console.log("Uploaded file:", file);
                 if (file) {
                     const fileId = file.$id
                     data.featuredimage = fileId
-                    console.log(userData.$id);
-                    // console.log(data);
-
 
                     const dbPost = await appwriteService.createPost({
                         ...data,
-                        userId: userData.userData.$id
+                        userId: userData.userData.$id,
                     })
                     if (dbPost) {
                         navigate(`/post/${dbPost.$id}`)
@@ -64,14 +57,13 @@ function PostForm({ post }) {
         }
     }
 
-    // Fixed: SlugTransform function - corrected regex
     const slugTransform = useCallback((value) => {
         if (value && typeof value === 'string') {
             return value
                 .trim()
                 .toLowerCase()
-                .replace(/[^a-zA-Z\d\s]+/g, '') // Remove special characters
-                .replace(/\s+/g, '-') // Replace spaces with hyphens
+                .replace(/[^a-zA-Z\d\s]+/g, '')
+                .replace(/\s+/g, '-')
         }
         return ''
     }, [])
@@ -91,20 +83,19 @@ function PostForm({ post }) {
     return (
         <form
             onSubmit={handleSubmit(submit)}
-            className="flex flex-wrap bg-white/70 backdrop-blur-lg rounded-xl shadow-2xl p-6 gap-4 border border-gray-200"
+            className="flex flex-wrap bg-white rounded-xl shadow-lg p-8 gap-6 border-2 border-blue-200"
         >
-            {/* Left Section: Title, Slug, Content */}
-            <div className="w-full md:w-2/3 px-2 space-y-4">
+            <div className="w-full md:w-2/3 px-2 space-y-6">
                 <Input
                     label="Title"
                     placeholder="Enter post title"
-                    className="w-full"
+                    className="w-full border border-gray-300 rounded-lg focus:border-blue-400"
                     {...register("title", { required: true })}
                 />
                 <Input
                     label="Slug"
                     placeholder="Slug (auto-generated)"
-                    className="w-full"
+                    className="w-full border border-gray-300 rounded-lg focus:border-blue-400"
                     {...register("slug", { required: true })}
                     onInput={(e) => {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
@@ -120,12 +111,11 @@ function PostForm({ post }) {
                 </div>
             </div>
 
-            {/* Right Section: Image, Status, Submit Button */}
-            <div className="w-full md:w-1/3 px-2 space-y-4">
+            <div className="w-full md:w-1/3 px-2 space-y-6">
                 <Input
                     label="Featured Image"
                     type="file"
-                    className="w-full"
+                    className="w-full border border-gray-300 rounded-lg focus:border-blue-400"
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
@@ -134,27 +124,28 @@ function PostForm({ post }) {
                         <img
                             src={appwriteService.getFilePreview(post.featuredimage)}
                             alt={post.title}
-                            className="rounded-xl shadow-md w-full object-cover max-h-48"
+                            className="rounded-lg shadow-md w-full object-cover max-h-48 border border-gray-300"
                         />
                     </div>
                 )}
                 <Select
                     options={["active", "inactive"]}
                     label="Status"
-                    className="w-full"
+                    className="w-full border border-gray-300 rounded-lg focus:border-blue-400"
                     {...register("status", { required: true })}
                 />
                 <Button
                     type="submit"
-                    bgcolor={post ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"}
-                    className="w-full text-lg font-semibold border-2 rounded-2xl border-black cursor-pointer bg-green-600 hover:bg-green-400"
+                    className={`w-full text-lg font-semibold border-2 rounded-lg border-blue-500 cursor-pointer transition-colors duration-200
+                        ${post
+                            ? "bg-green-500 hover:bg-green-600 text-white"
+                            : "bg-blue-600 hover:bg-blue-700 text-white"
+                        }`}
                 >
                     {post ? "Update Post" : "Create Post"}
                 </Button>
             </div>
         </form>
-
-
     );
 }
 
