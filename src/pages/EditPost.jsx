@@ -1,31 +1,42 @@
-import React, {useEffect, useState} from 'react'
-import {Container, PostForm} from '../components'
+import React, { useEffect, useState } from 'react';
+import { Container, PostForm } from '../components';
 import appwriteService from "../appwrite/config";
-import { useNavigate,  useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function EditPost() {
-    const [post, setPosts] = useState(null)
-    const {slug} = useParams()
-    const navigate = useNavigate()
+    const [post, setPost] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const { postId } = useParams(); // Changed from slug to postId
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if (slug) {
-            appwriteService.getPost(slug).then((post) => {
-                if (post) {
-                    setPosts(post)
-                }
-            })
-        } else {
-            navigate('/')
+        if (!postId) {
+            navigate('/');
+            return;
         }
-    }, [slug, navigate])
-  return post ? (
-    <div className='py-8'>
-        <Container>
-            <PostForm post={post} />
-        </Container>
-    </div>
-  ) : null
+
+        appwriteService.getPost(postId).then((postData) => {
+            if (postData) {
+                setPost(postData);
+            } else {
+                navigate('/');
+            }
+            setLoading(false);
+        }).catch(() => {
+            navigate('/');
+        });
+    }, [postId, navigate]);
+
+    if (loading) return <div>Loading...</div>;
+    if (!post) return null;
+
+    return (
+        <div className='py-8'>
+            <Container>
+                <PostForm post={post} />
+            </Container>
+        </div>
+    );
 }
 
-export default EditPost
+export default EditPost;
