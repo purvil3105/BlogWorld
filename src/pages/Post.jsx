@@ -13,7 +13,7 @@ export default function Post() {
 
     const userData = useSelector((state) => state.auth.userData);
     const isAuthor = post && userData ? post.userId === userData.userData.$id : false;
-    // console.log("Post data:", post);
+    console.log("Post data:", post);
     // console.log("User data:", userData.userData.$id);
     // console.log("Is author:", isAuthor);
 
@@ -31,12 +31,12 @@ export default function Post() {
     }, [slug, navigate]);
 
     if (loading) return <div>Loading...</div>;
-
+    console.log("Featured image ID:", post.featuredimage);
     const deletePost = () => {
         appwriteService.Deletepost(post.$id).then((status) => {
             if (status) {
                 appwriteService.deleteFile(post.featuredimage);
-                navigate("/");
+                navigate(-1);
             }
         });
     };
