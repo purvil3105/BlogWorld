@@ -1,6 +1,9 @@
 # 📝 BlogWorld - Modern Blogging Platform
 
-![BlogWorld Screenshot](https://via.placeholder.com/800x400/3b82f6/ffffff?text=BlogWorld+Screenshot)
+<img width="1920" height="1080" alt="Screenshot (397)" src="https://github.com/user-attachments/assets/89124143-a846-4fa2-931a-eb5ed97ae1f1" />
+<img width="1920" height="1080" alt="Screenshot (400)" src="https://github.com/user-attachments/assets/9b50ef28-92a0-4be7-af80-5bd3d0517537" />
+<img width="1920" height="1080" alt="Screenshot (398)" src="https://github.com/user-attachments/assets/4e8a874b-1b5f-4d90-a27c-a1c6de0cd454" />
+
 
 **BlogWorld** is a modern, full-stack blogging platform that allows users to **create, share, and discover engaging content**. Built with cutting-edge technologies, it provides a seamless writing and reading experience with real-time updates, secure authentication, and fast performance.
 
