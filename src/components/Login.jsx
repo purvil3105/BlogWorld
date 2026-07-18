@@ -30,8 +30,7 @@ function Login() {
     <div className='w-full flex-1 flex flex-col md:flex-row bg-[var(--color-primary-bg)]'>
         {/* Left Side: Brand & Image */}
         <div className="hidden md:flex md:w-1/2 bg-[var(--color-secondary-bg)] p-12 flex-col justify-between relative overflow-hidden border-r border-[var(--color-border-light)]">
-            <div className="relative z-10">
-                <Logo width="40px" />
+                <div className="relative z-10">
                 <h1 className="text-4xl lg:text-5xl font-bold font-heading mt-12 leading-tight">
                     Where curious minds <br/> find their next read.
                 </h1>
@@ -52,12 +51,12 @@ function Login() {
         
         {/* Right Side: Form */}
         <div className="w-full md:w-1/2 flex items-center justify-center p-6 sm:p-12">
-            <div className="w-full max-w-md bg-[var(--color-card-bg)] rounded-[24px] p-8 sm:p-10 shadow-[var(--shadow-editorial)] border border-[var(--color-border-light)] relative z-10">
-                <div className="md:hidden mb-8">
-                     <Logo width="40px" />
+            <div className="w-full max-w-md bg-[var(--color-card-bg)] rounded-[24px] p-8 sm:p-10 shadow-[var(--shadow-editorial)] border border-[var(--color-border-light)] relative z-10 text-center">
+                <div className="flex justify-center mb-6">
+                     <Logo width="160px" full={true} className="mix-blend-multiply" />
                 </div>
-                <h2 className="text-3xl font-bold font-heading mb-2">Welcome back</h2>
-                <p className="text-[var(--color-secondary-text)] mb-8">
+                <h2 className="text-3xl font-bold font-heading mb-2 text-left">Welcome back</h2>
+                <p className="text-[var(--color-secondary-text)] mb-8 text-left">
                     Don't have an account?&nbsp;
                     <Link to="/signup" className="text-[var(--color-primary-text)] font-medium underline-hover">
                         Sign up

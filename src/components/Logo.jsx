@@ -1,12 +1,14 @@
 import React from 'react'
-import blogLogo from '../assets/blog.png';
+import logo from '../assets/logo.png';
+import logoFull from '../assets/logo_full.png';
 
-function Logo({ width = '100px' }) {
+function Logo({ width = '100px', full = false, className = '' }) {
   return (
     <img 
-      src={blogLogo}
+      src={full ? logoFull : logo}
       alt="BlogWorld Logo"
       style={{ width }}
+      className={`object-contain ${className}`}
     />
   );
 }
