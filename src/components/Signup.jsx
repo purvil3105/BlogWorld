@@ -19,7 +19,7 @@ function Signup() {
             if (userData) {
                 const currentUser = await authservice.getCurrentuser();
                 if (currentUser) {
-                    dispatch(login(currentUser));
+                    dispatch(login({userData: currentUser}));
                     navigate("/");
                 }
             }

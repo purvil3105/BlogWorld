@@ -1,21 +1,27 @@
 # 📝 BlogWorld - Modern Blogging Platform
 
-<img width="1920" height="1080" alt="Screenshot (397)" src="https://github.com/user-attachments/assets/89124143-a846-4fa2-931a-eb5ed97ae1f1" />
-<img width="1920" height="1080" alt="Screenshot (400)" src="https://github.com/user-attachments/assets/9b50ef28-92a0-4be7-af80-5bd3d0517537" />
-<img width="1920" height="1080" alt="Screenshot (398)" src="https://github.com/user-attachments/assets/4e8a874b-1b5f-4d90-a27c-a1c6de0cd454" />
+<!-- Please upload your 4 new beautiful screenshots directly to GitHub and replace these image links below! -->
+<img width="1920" height="1080" alt="Home Page Screenshot" src="https://github.com/user-attachments/assets/89124143-a846-4fa2-931a-eb5ed97ae1f1" />
+<img width="1920" height="1080" alt="Explore Screenshot" src="https://github.com/user-attachments/assets/9b50ef28-92a0-4be7-af80-5bd3d0517537" />
+<img width="1920" height="1080" alt="Post Screenshot" src="https://github.com/user-attachments/assets/4e8a874b-1b5f-4d90-a27c-a1c6de0cd454" />
 
 
-**BlogWorld** is a modern, full-stack blogging platform that allows users to **create, share, and discover engaging content**. Built with cutting-edge technologies, it provides a seamless writing and reading experience with real-time updates, secure authentication, and fast performance.
+**BlogWorld** is a premium, full-stack blogging platform that allows users to **create, share, and discover engaging content**. Built with cutting-edge technologies, it provides a seamless writing and reading experience with real-time updates, secure authentication, social networking features, and lightning-fast performance.
+
+---
+
+## 🌍 Demo
+
+🚀 **[Live Demo](https://blog-world-olive.vercel.app/)**
 
 ---
 
 ## 📑 Table of Contents
 
 * [Features](#-features)
-* [Demo](#-demo)
+* [Tech Stack](#-tech-stack)
 * [Installation](#-installation)
 * [Usage](#-usage)
-* [Tech Stack](#-tech-stack)
 * [Challenges & Solutions](#-challenges--solutions)
 * [Future Improvements](#-future-improvements)
 * [License & Credits](#-license--credits)
@@ -27,18 +33,43 @@
 
 * 📝 **Rich Text Editor** – Tiptap-powered editor with advanced formatting tools
 * 🔐 **User Authentication** – Secure signup/login with Appwrite
-* 📱 **Responsive Design** – Works on desktop, tablet, and mobile
-* 🖼️ **Image Management** – Upload and manage featured images
-* 🏷️ **Post Management** – Create, edit, delete, and organize posts
-* 👤 **User Profiles** – Personal dashboards with post ownership
-* ⚡ **Fast Performance** – Optimized with React + Vite
-* 🌙 **Dark/Light Mode** – Planned theme switching
+* 👤 **Custom User Profiles** – Personalized dashboards with dynamically synced avatars
+* 🤝 **Social Network** – Follow other writers, build an audience, and see activity timelines
+* 🔖 **Bookmarks** – Save your favorite articles for later reading
+* 🔍 **Advanced Search** – Instantly search for articles and authors across the platform
+* 📈 **Trending Algorithm** – Appwrite Cloud Functions automatically calculate trending posts based on views and engagement
+* 📑 **Categorization** – Organize and browse posts by categories (Technology, Design, Business, etc.)
+* 💬 **Commenting System** – Engage with authors and readers directly on posts
+* 📱 **Premium Responsive UI** – Beautiful, modern design that works flawlessly on desktop, tablet, and mobile
+* 🖼️ **Image Management** – Upload and manage featured images and profile photos via Appwrite Storage
+* ⚡ **Fast Performance** – Optimized single-page application with React + Vite
 
 ---
 
-## 🌍 Demo
+## 🛠️ Tech Stack
 
-🚀 **[Live Demo](blog-world-olive.vercel.app/)**
+### Frontend
+
+* ⚛️ **React 18+** – Component-driven UI
+* ⚡ **Vite** – Lightning-fast bundler
+* 🎨 **Tailwind CSS** – Utility-first styling for a premium aesthetic
+* 🧭 **React Router** – Client-side navigation
+* 🏷️ **Tiptap** – Rich text editor
+* 🎯 **Redux Toolkit** – Global state management
+* 📋 **React Hook Form** – Form validation
+
+### Backend & Services (Appwrite)
+
+* 🔧 **Appwrite** – Complete Backend-as-a-Service
+* 🗄️ **Appwrite Database** – NoSQL database managing Posts, Users, Follows, Bookmarks, and Comments
+* 💾 **Appwrite Storage** – Secure file & image handling for featured images and avatars
+* 🔐 **Appwrite Auth** – Secure user authentication and session management
+* 🌩️ **Appwrite Cloud Functions** – Serverless Node.js functions running scheduled cron jobs for trending algorithms
+
+### Deployment
+
+* ▲ **Vercel** – Frontend hosting & deployment
+* ☁️ **Appwrite Cloud** – Backend services
 
 ---
 
@@ -77,66 +108,34 @@ npm run dev
 
 ## 🚀 Usage
 
-* 🔑 **Sign Up / Login** – Secure authentication
-* 📝 **Create Posts** – Use the rich editor to write blogs
-* 📂 **Manage Content** – Edit/delete posts from dashboard
-* 🌐 **Explore** – Browse all posts on the home page
-* 💬 **Interact** – Like & comment (future feature)
-
----
-
-## 🛠️ Tech Stack
-
-### Frontend
-
-* ⚛️ **React 18+** – Component-driven UI
-* ⚡ **Vite** – Lightning-fast bundler
-* 🎨 **Tailwind CSS** – Utility-first styling
-* 🧭 **React Router** – Client-side navigation
-* 🏷️ **Tiptap** – Rich text editor
-* 🎯 **Redux Toolkit** – State management
-* 📋 **React Hook Form** – Form validation
-
-### Backend & Services
-
-* 🔧 **Appwrite** – Backend-as-a-Service
-* 🗄️ **Appwrite Database** – NoSQL database
-* 💾 **Appwrite Storage** – File & image handling
-* 🔐 **Appwrite Auth** – User authentication
-
-### Deployment
-
-* ▲ **Vercel** – Frontend hosting
-* ☁️ **Appwrite Cloud** – Backend services
+* 🔑 **Sign Up / Login** – Create your account and set up your profile picture
+* 📝 **Create Posts** – Use the rich editor to write blogs and select categories
+* 📂 **Manage Content** – Edit/delete posts from your dashboard
+* 🌐 **Explore** – Discover new creators and trending articles
+* 🤝 **Connect** – Follow authors and interact via comments
+* 🔖 **Save** – Bookmark articles to read later
 
 ---
 
 ## 🧩 Challenges & Solutions
 
-**Challenge 1: Rich Text Editor Compatibility**
-*Problem*: TinyMCE had React 19 issues.
-*Solution*: Migrated to **Tiptap** for better React support.
+**Challenge 1: Avatar Synchronization Across the Platform**
+*Problem*: When a user updated their profile picture, old posts and comments still showed the old image because the image ID was hardcoded into the document.
+*Solution*: Architected a dynamic `UserAvatar` component with a built-in memory cache that fetches the latest profile picture natively, ensuring avatars are always 100% synchronized everywhere without slowing down the app.
 
-**Challenge 2: State Management Complexity**
-*Problem*: Hard to manage auth + posts.
-*Solution*: Implemented **Redux Toolkit**.
+**Challenge 2: Single Page App (SPA) Routing on Vercel**
+*Problem*: Hard refreshing on routes like `/profile` caused 404 errors.
+*Solution*: Added a `vercel.json` configuration file to rewrite all routes back to `index.html`, allowing React Router to handle the navigation properly.
 
-**Challenge 3: Image Handling**
-*Problem*: Uploading & previewing images efficiently.
-*Solution*: Integrated **Appwrite Storage**.
-
-**Challenge 4: Responsive UI**
-*Problem*: UI inconsistency across devices.
-*Solution*: Adopted **Tailwind’s mobile-first approach**.
+**Challenge 3: Complex State Management**
+*Problem*: Hard to manage auth, posts, and bookmarks globally.
+*Solution*: Implemented **Redux Toolkit** for predictable and efficient state management.
 
 ---
 
 ## 🚀 Future Improvements
 
-* 💬 Real-time comments system
-* ❤️ Likes & shares
-* 🏷️ Categories & tags
-* 📧 Email notifications
+* 📧 Email notifications for new followers and posts
 * 🌍 Multi-language support
 * 📱 Progressive Web App (offline support)
 * 🛠️ Admin dashboard for moderation
@@ -163,6 +162,5 @@ Special thanks to the open-source community ❤️
 👨‍💻 **Author**: Purvil Patel
 📧 **Email**: [patelpurvil3105@gmail.com](mailto:patelpurvil3105@gmail.com)
 🐙 **GitHub**: [purvil3105](https://github.com/purvil3105)
-💼 **LinkedIn**: *(Add your LinkedIn link)*
 
 ⭐ If you found this project helpful, please give it a star on GitHub!
