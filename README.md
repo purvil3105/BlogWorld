@@ -1,9 +1,12 @@
 # 📝 BlogWorld - Modern Blogging Platform
 
 <!-- Please upload your 4 new beautiful screenshots directly to GitHub and replace these image links below! -->
-<img width="1920" height="1080" alt="Home Page Screenshot" src="https://github.com/user-attachments/assets/89124143-a846-4fa2-931a-eb5ed97ae1f1" />
-<img width="1920" height="1080" alt="Explore Screenshot" src="https://github.com/user-attachments/assets/9b50ef28-92a0-4be7-af80-5bd3d0517537" />
-<img width="1920" height="1080" alt="Post Screenshot" src="https://github.com/user-attachments/assets/4e8a874b-1b5f-4d90-a27c-a1c6de0cd454" />
+<img width="1920" height="1080" alt="Screenshot (738)" src="https://github.com/user-attachments/assets/0769fc09-a60a-43da-980b-30f67e05e6ec" />
+<img width="1920" height="1080" alt="Screenshot (730)" src="https://github.com/user-attachments/assets/07454d24-d86f-4a1b-8486-b1815c862177" />
+c<img width="1920" height="1080" alt="Screenshot (731)" src="https://github.com/user-attachments/assets/25f4f300-05b8-44fb-a743-647f44e92661" />
+<img width="1920" height="1080" alt="Screenshot (732)" src="https://github.com/user-attachments/assets/c63c9cb3-a08c-4276-9c7b-a23ee40bd758" />
+<img width="1920" height="1080" alt="Screenshot (734)" src="https://github.com/user-attachments/assets/4655ce26-b3c9-4cfe-a89d-df4824974505" />
+<img width="1920" height="1080" alt="Screenshot (735)" src="https://github.com/user-attachments/assets/19daba3d-e1d0-4848-8108-bab5563e470e" />
 
 
 **BlogWorld** is a premium, full-stack blogging platform that allows users to **create, share, and discover engaging content**. Built with cutting-edge technologies, it provides a seamless writing and reading experience with real-time updates, secure authentication, social networking features, and lightning-fast performance.
