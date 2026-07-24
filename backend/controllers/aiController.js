@@ -75,7 +75,8 @@ export const generateCoverImage = async (req, res, next) => {
       res.json({ imageUrl: uploadResponse.secure_url });
     } catch (genError) {
       console.warn("Imagen generation failed, using fallback:", genError.message);
-      const fallbackUrl = `https://picsum.photos/seed/${Math.random().toString(36).substring(7)}/1600/900`;
+      // Use pollinations.ai which generates images based on the prompt for free
+      const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?width=1600&height=900&nologo=true`;
       res.json({ imageUrl: fallbackUrl, fallback: true });
     }
   } catch (error) {
