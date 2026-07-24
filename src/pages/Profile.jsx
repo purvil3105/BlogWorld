@@ -121,19 +121,11 @@ function Profile() {
                 await authService.updateName(editForm.name);
             }
             
-            let finalAvatarId = editForm.avatarId;
-            if (editForm.newAvatarFile) {
-                const fileRes = await appwriteService.uploadFile(editForm.newAvatarFile);
-                if (fileRes) {
-                    finalAvatarId = fileRes.$id;
-                }
-            }
-
             const profileData = {
                 name: editForm.name,
                 bio: editForm.bio,
                 country: editForm.country,
-                avatarId: finalAvatarId
+                avatarId: editForm.newAvatarFile || editForm.avatarId
             };
             
             if (profileDoc) {

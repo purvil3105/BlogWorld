@@ -41,9 +41,9 @@ function ActivityTimeline({ activities }) {
                             <p className="text-[var(--color-primary-text)] font-medium font-body text-sm">
                                 {activity.message}
                             </p>
-                            {activity.$createdAt && (
+                            {activity.createdAt && (
                                 <p className="text-xs text-[var(--color-secondary-text)] mt-1">
-                                    {formatDate(activity.$createdAt)}
+                                    {formatDate(activity.createdAt)}
                                 </p>
                             )}
                         </div>

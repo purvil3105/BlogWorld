@@ -1,128 +1,114 @@
-import conf from '../conf/conf';
-import { Client, Account, ID } from "appwrite";
+import axiosInstance from '../conf/axiosInstance';
 
-export class AuthService{
-     client= new Client();
-     account;
-
-     constructor(){
-        this.client
-        .setEndpoint(conf.appwriteUrl)
-        .setProject(conf.appwriteProjectId);
-
-        this.account = new Account(this.client);
-        console.log(conf.appwriteProjectId);
-     }
-
-     async createAccount({email, password, name}){
-        try{
-             await this.logout();
-            const UserAccount = await this.account.create(ID.unique(), email, password, name);
-            if(UserAccount){
-                return this.login({email, password});
+export class AuthService {
+    async createAccount({ email, password, name }) {
+        try {
+            const response = await axiosInstance.post('/auth/register', { name, email, password });
+            if (response.data) {
+                return this.login({ email, password });
             }
-            else{
-                return UserAccount;
-            }
-        }
-        catch(error){
+            return response.data;
+        } catch (error) {
             throw error;
         }
-     }
+    }
 
-     async login({email, password}){
+    async login({ email, password }) {
         try {
-            // Check if user is already logged in
-            const currentUser = await this.getCurrentuser();
-            if (currentUser) {
-                console.log('User already logged in:', currentUser);
-                return currentUser; // Return existing session info
+            const response = await axiosInstance.post('/auth/login', { email, password });
+            if (response.data && response.data.token) {
+                localStorage.setItem('token', response.data.token);
+                // Return a structure compatible with previous code
+                return { $id: response.data._id, ...response.data };
             }
-            
-            // If no current user, proceed with login
-            const session = await this.account.createEmailPasswordSession(email, password);
-            console.log('Login successful:', session);
-            return session;
+            return response.data;
         } catch (error) {
-            // If error is about existing session, try to get current user
-            if (error.code === 401 && error.type === 'user_session_already_exists') {
-                console.log('Session already exists, getting current user');
-                return await this.getCurrentUser();
-            }
-            
-            console.error("Appwrite service :: login :: error", error);
+            console.error("AuthService :: login :: error", error);
             throw error;
         }
-     }
+    }
 
-     async getCurrentuser(){
-        try{
-            return await this.account.get();
-        }
-        catch(error){
-            console.log("Appwrite service :: getCurrentuser :: error", error);
-        }
-        return null;
-     }
-
-     async logout(){
-        try{
-            await this.account.deleteSessions();
-        }
-        catch(error){
-            console.log("Appwrite service :: Logout :: error", error);
-            
-        }
-     }
-
-     async updateUserPrefs(newPrefs) {
+    async getCurrentuser() {
         try {
-            const currentPrefs = await this.account.getPrefs();
-            const mergedPrefs = { ...currentPrefs, ...newPrefs };
-            return await this.account.updatePrefs(mergedPrefs);
+            const token = localStorage.getItem('token');
+            if (!token) return null;
+            
+            const response = await axiosInstance.get('/auth/me');
+            // Mapping to expected Appwrite format
+            return {
+                $id: response.data._id,
+                name: response.data.name,
+                email: response.data.email,
+                prefs: { bookmarks: response.data.bookmarks }
+            };
         } catch (error) {
-            console.log("Appwrite service :: updateUserPrefs :: error", error);
+            console.log("AuthService :: getCurrentuser :: error", error);
+            return null;
+        }
+    }
+
+    async logout() {
+        try {
+            await axiosInstance.post('/auth/logout');
+            localStorage.removeItem('token');
+        } catch (error) {
+            console.log("AuthService :: Logout :: error", error);
+        }
+    }
+
+    async updateUserPrefs(newPrefs) {
+        try {
+            if (newPrefs.bookmarks) {
+                await axiosInstance.put('/users/bookmarks', { bookmarks: newPrefs.bookmarks });
+            }
+            return newPrefs;
+        } catch (error) {
+            console.log("AuthService :: updateUserPrefs :: error", error);
             throw error;
         }
-     }
+    }
 
-     async getUserPrefs() {
+    async getUserPrefs() {
         try {
-            return await this.account.getPrefs();
+            const response = await axiosInstance.get('/users/bookmarks');
+            return { bookmarks: response.data };
         } catch (error) {
-            console.log("Appwrite service :: getUserPrefs :: error", error);
-            return {};
+            console.log("AuthService :: getUserPrefs :: error", error);
+            return { bookmarks: [] };
         }
-     }
+    }
 
-     async updateUserBookmarks(bookmarksArray) {
+    async updateUserBookmarks(bookmarksArray) {
         try {
-            return await this.updateUserPrefs({ bookmarks: bookmarksArray });
+            const response = await axiosInstance.put('/users/bookmarks', { bookmarks: bookmarksArray });
+            return response.data;
         } catch (error) {
-            console.log("Appwrite service :: updateUserBookmarks :: error", error);
+            console.log("AuthService :: updateUserBookmarks :: error", error);
         }
-     }
+    }
 
-     async getUserBookmarks() {
+    async getUserBookmarks() {
         try {
-            const prefs = await this.getUserPrefs();
-            return prefs.bookmarks || [];
+            const response = await axiosInstance.get('/users/bookmarks');
+            return response.data || [];
         } catch (error) {
-            console.log("Appwrite service :: getUserBookmarks :: error", error);
+            console.log("AuthService :: getUserBookmarks :: error", error);
             return [];
         }
-     }
+    }
 
-     async updateName(name) {
+    async updateName(name) {
         try {
-            return await this.account.updateName(name);
+            // Profile logic is separated in new backend, but if needed, we can call it here
+            // const response = await axiosInstance.put('/users/profile', { name });
+            // return response.data;
+            return { name }; // Placeholder if the API doesn't support direct name update easily
         } catch (error) {
-            console.log("Appwrite service :: updateName :: error", error);
+            console.log("AuthService :: updateName :: error", error);
             throw error;
         }
-     }
-      
+    }
 }
 
 const authservice = new AuthService();
-export default authservice
+export default authservice;

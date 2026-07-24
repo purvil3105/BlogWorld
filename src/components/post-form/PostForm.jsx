@@ -4,7 +4,8 @@ import { Button, RTE } from '../index'
 import appwriteService from '../../appwrite/config'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { Save, ImagePlus, X } from 'lucide-react'
+import { Save, ImagePlus, X, Sparkles } from 'lucide-react'
+import AiWriterPanel from '../AiWriterPanel'
 
 function PostForm({ post }) {
     const { register, handleSubmit, watch, control, setValue, getValues } = useForm({
@@ -21,6 +22,8 @@ function PostForm({ post }) {
     const userData = useSelector(state => state.auth.userData)
     const [authorAvatarId, setAuthorAvatarId] = React.useState('')
     const [isSubmitting, setIsSubmitting] = React.useState(false)
+    const [isAiPanelOpen, setIsAiPanelOpen] = React.useState(false)
+    const [aiCoverImageUrl, setAiCoverImageUrl] = React.useState('')
     
     React.useEffect(() => {
         const uid = userData?.$id || userData?.userData?.$id;
@@ -45,26 +48,33 @@ function PostForm({ post }) {
                 }
                 const dbPost = await appwriteService.Updatepost(post.$id, {
                     ...data,
-                    featuredimage: file ? file.$id : undefined
+                    featuredimage: file ? file.$id : (aiCoverImageUrl ? aiCoverImageUrl : undefined)
                 })
                 if (dbPost) {
                     navigate(`/post/${dbPost.$id}`)
                 }
             } else {
                 if (!data.image || !data.image[0]) {
-                    alert("Please add a cover image before publishing.");
-                    setIsSubmitting(false);
-                    return;
+                    if (!aiCoverImageUrl) {
+                        alert("Please add a cover image before publishing.");
+                        setIsSubmitting(false);
+                        return;
+                    }
                 }
                 if (!data.content || data.content === '<p><br></p>') {
                     alert("Please write some content before publishing.");
                     setIsSubmitting(false);
                     return;
                 }
-                const file = await appwriteService.uploadFile(data.image[0])
-                if (file) {
-                    const fileId = file.$id
-                    data.featuredimage = fileId
+                
+                let featuredimage = aiCoverImageUrl;
+                if (data.image && data.image[0]) {
+                    const file = await appwriteService.uploadFile(data.image[0]);
+                    if (file) featuredimage = file.$id;
+                }
+
+                if (featuredimage) {
+                    data.featuredimage = featuredimage;
                     const uid = userData?.$id || userData?.userData?.$id;
                     const uname = userData?.name || userData?.userData?.name || 'Author';
                     try {
@@ -81,8 +91,7 @@ function PostForm({ post }) {
                             navigate(`/post/${dbPost.$id}`)
                         }
                     } catch (error) {
-                        await appwriteService.deleteFile(fileId)
-                        alert(`Failed to publish the post. Appwrite says: "${error.message}". Image was safely removed.`)
+                        alert(`Failed to publish the post. Appwrite says: "${error.message}".`)
                     }
                 }
             }
@@ -132,6 +141,7 @@ function PostForm({ post }) {
     };
 
     return (
+        <>
         <form onSubmit={handleSubmit(submit, onError)} className="relative max-w-4xl mx-auto w-full pt-12 pb-32 px-4 md:px-8 bg-[var(--color-primary-bg)]">
             {/* Top Action Bar (Floating Save) */}
             <div className="fixed top-24 right-4 md:right-10 z-40 flex items-center space-x-3 bg-white/90 backdrop-blur-md px-3 py-2 rounded-full border border-[var(--color-border-light)] shadow-[var(--shadow-editorial)]">
@@ -178,6 +188,14 @@ function PostForm({ post }) {
                 >
                     <Save className="w-4 h-4" />
                     <span>{isSubmitting ? "Publishing..." : post ? "Update" : "Publish"}</span>
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setIsAiPanelOpen(true)}
+                    className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-200 shadow-sm"
+                >
+                    <Sparkles className="w-4 h-4" />
+                    <span className="hidden sm:inline">Ask AI</span>
                 </button>
             </div>
 
@@ -250,6 +268,17 @@ function PostForm({ post }) {
                 </div>
             </div>
         </form>
+        <AiWriterPanel 
+            isOpen={isAiPanelOpen} 
+            onClose={() => setIsAiPanelOpen(false)} 
+            setValue={setValue} 
+            getValues={getValues}
+            onCoverImageGenerated={(url) => {
+                setAiCoverImageUrl(url);
+                setPreviewUrl(url);
+            }} 
+        />
+        </>
     );
 }
 

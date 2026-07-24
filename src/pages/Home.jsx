@@ -92,13 +92,21 @@ function Home() {
     const featuredPost = posts.length > 0 ? posts[0] : null;
     const gridPosts = posts.length > 1 ? posts.slice(1) : [];
 
+    let featuredReadTime = '6 min read';
+    let featuredDate = 'Recent';
+    if (featuredPost) {
+        const wordCount = featuredPost.content ? featuredPost.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length : 0;
+        featuredReadTime = wordCount > 0 ? `${Math.ceil(wordCount / 200)} min read` : '6 min read';
+        featuredDate = featuredPost.createdAt ? new Date(featuredPost.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
+    }
+
     return (
         <div className='w-full py-12'>
             <Container>
                 {/* Hero Section */}
                 {featuredPost && (
                     <div className="mb-20">
-                        <Link to={`/post/${featuredPost.$id}`} className="group block">
+                        <Link to={`/post/${featuredPost.slug || featuredPost.$id}`} className="group block">
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                                 <div className="order-2 lg:order-1 pr-0 lg:pr-10">
                                     <span className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 text-[var(--color-accent-primary)] rounded-full text-xs font-semibold uppercase tracking-wider mb-6">
@@ -120,7 +128,7 @@ function Home() {
                                             </div>
                                             <div>
                                                 <p className="text-[var(--color-primary-text)] font-semibold leading-tight">{featuredPost.authorName || 'Anonymous Author'}</p>
-                                                <p className="text-xs">{new Date(featuredPost.$createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} &middot; 6 min read</p>
+                                                <p className="text-xs">{featuredDate} &middot; {featuredReadTime}</p>
                                             </div>
                                         </div>
                                     </div>

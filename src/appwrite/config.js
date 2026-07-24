@@ -1,318 +1,219 @@
-import conf from '../conf/conf'
-import { Client, ID, Databases, Storage, Query, Permission, Role } from "appwrite";
-
+import axiosInstance from '../conf/axiosInstance';
+import conf from '../conf/conf';
 
 export class Service {
-    client = new Client();
-    databases;
-    bucket;
-    constructor() {
-        this.client
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
-        this.databases = new Databases(this.client);
-        this.bucket = new Storage(this.client);
-    }
-
-    async createPost({ title, slug, content, featuredimage, status, userId, authorName, authorAvatarId, category, likes, comments }) {
+    async createPost({ title, slug, content, featuredimage, status, userId, category, likes, comments, authorName, authorAvatarId }) {
         try {
-            const payload = {
-                title,
-                content,
-                featuredimage,
-                status,
-                userId,
-                authorName,
-                category,
-            };
-            if (authorAvatarId) payload.authorAvatarId = authorAvatarId;
-            if (likes) payload.likes = likes;
-            if (comments) payload.comments = comments;
-
-            return await this.databases.createDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                slug,
-                payload
-            )
-        }
-        catch (error) {
-            console.log("Appwrite service :: createPost :: error", error);
-            throw error;
-        }
-    }
-
-    async Updatepost(slug, { title, content, featuredimage, status, category }) {
-        try {
-            return await this.databases.updateDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                slug,
-                {
-                    title,
-                    content,
-                    featuredimage,
-                    status,
-                    category
-                }
-            )
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('slug', slug);
+            formData.append('content', content);
+            formData.append('status', status);
+            if (category) formData.append('category', category);
+            if (authorName) formData.append('authorName', authorName);
+            if (authorAvatarId) formData.append('authorAvatarId', authorAvatarId);
+            
+            if (featuredimage) {
+                // If it's a File object from an input type="file"
+                formData.append('featuredimage', featuredimage);
+            }
+            
+            const response = await axiosInstance.post('/posts', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            return { $id: response.data._id, ...response.data };
         } catch (error) {
-            console.log("Appwrite service :: Updatepost :: error", error);
+            console.log("Service :: createPost :: error", error);
         }
     }
 
-    async updatePostInteractions(slug, { likes, comments }) {
+    async updatePost(slug, { title, content, featuredimage, status, category }) {
         try {
-            const updateData = {};
-            if (likes !== undefined) updateData.likes = likes;
-            if (comments !== undefined) updateData.comments = comments;
+            // First we need to get the post ID from slug because our backend update route uses ID
+            const postResponse = await axiosInstance.get(`/posts/slug/${slug}`);
+            const postId = postResponse.data._id;
 
-            return await this.databases.updateDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                slug,
-                updateData
-            )
+            const formData = new FormData();
+            if (title) formData.append('title', title);
+            if (content) formData.append('content', content);
+            if (status) formData.append('status', status);
+            if (category) formData.append('category', category);
+            // We pass featuredimage only if a new file is selected
+            if (featuredimage && typeof featuredimage !== 'string') {
+                formData.append('featuredimage', featuredimage);
+            }
+
+            const response = await axiosInstance.put(`/posts/${postId}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            return { $id: response.data._id, ...response.data };
         } catch (error) {
-            console.log("Appwrite service :: updatePostInteractions :: error", error);
+            console.log("Service :: updatePost :: error", error);
+        }
+    }
+    
+    async updatePostInteractions(postId, { likes, comments }) {
+        try {
+            const payload = {};
+            if (likes !== undefined) payload.likes = likes;
+            if (comments !== undefined) payload.comments = comments;
+            const response = await axiosInstance.put(`/posts/${postId}/interactions`, payload);
+            return response.data;
+        } catch (error) {
+            console.log("Service :: updatePostInteractions :: error", error);
+            return false;
         }
     }
 
-    async Deletepost(slug) {
+    async deletePost(slug) {
         try {
-            await this.databases.deleteDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                slug,
-            )
+            const postResponse = await axiosInstance.get(`/posts/slug/${slug}`);
+            const postId = postResponse.data._id;
+            
+            await axiosInstance.delete(`/posts/${postId}`);
             return true;
         } catch (error) {
-            console.log("Appwrite service :: Deletepost :: error", error);
-            return false
+            console.log("Service :: deletePost :: error", error);
+            return false;
         }
     }
 
     async getPost(slug) {
         try {
-            return await this.databases.getDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                slug,
-            )
+            const response = await axiosInstance.get(`/posts/slug/${slug}`);
+            return { $id: response.data._id, ...response.data };
         } catch (error) {
-            console.log("Appwrite service :: getpost :: error", error);
-            return false
+            console.log("Service :: getPost :: error", error);
+            return false;
         }
     }
 
-    async getPosts(queries = [Query.equal("status", "active")], userId = null) {
+    async getPosts() {
         try {
-            if (userId) {
-                queries.push(Query.equal("userId", userId));
-            }
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                queries,
-            )
+            const response = await axiosInstance.get('/posts');
+            // Map MongoDB _id to $id for frontend compatibility
+            const docs = response.data.documents.map(doc => ({ $id: doc._id, ...doc }));
+            return { documents: docs };
         } catch (error) {
-            console.log("Appwrite service :: getPosts :: error", error);
+            console.log("Service :: getPosts :: error", error);
+            return false;
         }
     }
 
-    async getTrendingFeed(queries = []) {
+    async getTrendingFeed() {
         try {
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                [
-                    Query.equal("status", "active"),
-                    Query.orderDesc("trendingScore"),
-                    Query.limit(20),
-                    ...queries
-                ]
-            );
+            const response = await axiosInstance.get('/posts/trending');
+            const docs = response.data.documents.map(doc => ({ $id: doc._id, ...doc }));
+            return { documents: docs };
         } catch (error) {
-            console.log("Appwrite service :: getTrendingFeed :: error", error);
+            console.log("Service :: getTrendingFeed :: error", error);
             return false;
         }
     }
 
     async getFollowingFeed(userId) {
         try {
-            // Step 1: Get people the user follows
-            const follows = await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteFollowersCollectionId,
-                [
-                    Query.equal("followerId", userId),
-                    Query.limit(500)
-                ]
-            );
-            
-            const followingIds = follows.documents.map(f => f.followingId);
-            if (followingIds.length === 0) return { documents: [], total: 0 };
-
-            // Step 2: Get posts from those users
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                [
-                    Query.equal("status", "active"),
-                    Query.equal("userId", followingIds),
-                    Query.orderDesc("$createdAt"),
-                    Query.limit(20)
-                ]
-            );
+            const response = await axiosInstance.get('/posts/following');
+            const docs = response.data.documents.map(doc => ({ $id: doc._id, ...doc }));
+            return { documents: docs };
         } catch (error) {
-            console.log("Appwrite service :: getFollowingFeed :: error", error);
+            console.log("Service :: getFollowingFeed :: error", error);
             return false;
         }
     }
 
     async getCurrentUserPosts(userId) {
         try {
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                [Query.equal("userId", userId)]
-            );
+            const response = await axiosInstance.get(`/posts/user/${userId}`);
+            const docs = response.data.documents.map(doc => ({ $id: doc._id, ...doc }));
+            return { documents: docs };
         } catch (error) {
-            console.log("Appwrite service :: getCurrentUserPosts :: error", error);
+            console.log("Service :: getCurrentUserPosts :: error", error);
             return false;
         }
     }
 
+    // Storage service
     async uploadFile(file) {
         try {
-            return await this.bucket.createFile(
-                conf.appwriteBucketId,
-                ID.unique(),
-                file,
-            )
+            // In the new backend, files are uploaded along with the post data
+            // We return the file object itself so it can be passed to createPost/updatePost
+            return file; 
         } catch (error) {
-            console.log("Appwrite service :: uploadFile :: error", error);
+            console.log("Service :: uploadFile :: error", error);
             return false;
         }
     }
 
-
     async deleteFile(fileId) {
-        try {
-            await this.bucket.deleteFile(
-                conf.appwriteBucketId,
-                fileId
-            )
-            return true;
-        } catch (error) {
-            console.log("Appwrite service :: deleteFile :: error", error);
-            return false;
-        }
+        // Cloudinary handles this via backend when deleting a post, or we leave it.
+        return true;
     }
 
     getFilePreview(fileId) {
-        return this.bucket.getFileView(
-            conf.appwriteBucketId,
-            fileId
-        )
-    }
-
-    // --- Followers System ---
-
-    async followUser(followerId, followingId, followerName = "Unknown", followingName = "Unknown") {
-        try {
-            // First check if already following to prevent duplicates
-            const existing = await this.isFollowing(followerId, followingId);
-            if (existing) return existing;
-
-            return await this.databases.createDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteFollowersCollectionId,
-                ID.unique(),
-                {
-                    followerId,
-                    followingId,
-                    followerName,
-                    followingName
-                },
-                [
-                    Permission.delete(Role.user(followerId))
-                ]
-            );
-        } catch (error) {
-            console.log("Appwrite service :: followUser :: error", error);
-            return false;
-        }
-    }
-
-    async unfollowUser(documentId) {
-        try {
-            await this.databases.deleteDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteFollowersCollectionId,
-                documentId
-            );
-            return true;
-        } catch (error) {
-            console.log("Appwrite service :: unfollowUser :: error", error);
-            return false;
-        }
+        if (!fileId) return null;
+        if (fileId.startsWith('http')) return fileId;
+        // Legacy Cloudinary fallback or no image
+        return null;
     }
 
     async isFollowing(followerId, followingId) {
         try {
-            const response = await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteFollowersCollectionId,
-                [
-                    Query.equal("followerId", followerId),
-                    Query.equal("followingId", followingId)
-                ]
-            );
-            return response.documents.length > 0 ? response.documents[0] : false;
+            const response = await axiosInstance.get(`/users/follow/status/${followingId}`);
+            return response.data.isFollowing;
         } catch (error) {
-            console.log("Appwrite service :: isFollowing :: error", error);
+            console.log("Service :: isFollowing :: error", error);
             return false;
         }
     }
 
     async getFollowersCount(userId) {
         try {
-            const response = await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteFollowersCollectionId,
-                [Query.equal("followingId", userId)]
-            );
-            return response.total;
+            const response = await axiosInstance.get(`/users/followers/count/${userId}`);
+            return response.data.count;
         } catch (error) {
-            console.log("Appwrite service :: getFollowersCount :: error", error);
+            console.log("Service :: getFollowersCount :: error", error);
             return 0;
         }
     }
 
     async getFollowingCount(userId) {
         try {
-            const response = await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteFollowersCollectionId,
-                [Query.equal("followerId", userId)]
-            );
-            return response.total;
+            const response = await axiosInstance.get(`/users/following/count/${userId}`);
+            return response.data.count;
         } catch (error) {
-            console.log("Appwrite service :: getFollowingCount :: error", error);
+            console.log("Service :: getFollowingCount :: error", error);
             return 0;
         }
     }
 
     async getFollowersList(userId) {
         try {
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteFollowersCollectionId,
-                [Query.equal("followingId", userId), Query.limit(100)]
-            );
+            const response = await axiosInstance.get(`/users/followers/list/${userId}`);
+            const docs = response.data.map(doc => ({ $id: doc._id, ...doc }));
+            return { documents: docs };
         } catch (error) {
-            console.log("Appwrite service :: getFollowersList :: error", error);
+            console.log("Service :: getFollowersList :: error", error);
+            return { documents: [] };
+        }
+    }
+
+    async followUser(followerId, targetUserId, followerName, followingName) {
+        try {
+            const response = await axiosInstance.post('/users/follow', { targetUserId });
+            return response.data;
+        } catch (error) {
+            console.log("Service :: followUser :: error", error);
+            return false;
+        }
+    }
+
+    async unfollowUser(targetUserId) {
+        try {
+            const response = await axiosInstance.post('/users/unfollow', { targetUserId });
+            return response.data;
+        } catch (error) {
+            console.log("Service :: unfollowUser :: error", error);
             return false;
         }
     }
@@ -321,65 +222,49 @@ export class Service {
 
     async getProfile(userId) {
         try {
-            const response = await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteProfilesCollectionId,
-                [Query.equal("userId", userId)]
-            );
-            return response.documents.length > 0 ? response.documents[0] : null;
+            const response = await axiosInstance.get(`/users/profile/${userId}`);
+            return response.data;
         } catch (error) {
-            console.log("Appwrite service :: getProfile :: error", error);
+            console.log("Service :: getProfile :: error", error);
             return null;
         }
     }
 
     async createProfile(userId, { name, bio, country, avatarId }) {
         try {
-            return await this.databases.createDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteProfilesCollectionId,
-                ID.unique(),
-                {
-                    userId,
-                    name,
-                    bio: bio || "",
-                    country: country || "",
-                    avatarId: avatarId || ""
-                },
-                [
-                    Permission.update(Role.user(userId))
-                ]
-            );
+            const formData = new FormData();
+            if (bio) formData.append('bio', bio);
+            if (country) formData.append('country', country); // Need to add to backend model if desired
+            if (avatarId && typeof avatarId !== 'string') {
+                formData.append('avatar', avatarId); // Assuming avatarId is the File
+            }
+            const response = await axiosInstance.put('/users/profile', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            return response.data;
         } catch (error) {
-            console.log("Appwrite service :: createProfile :: error", error);
+            console.log("Service :: createProfile :: error", error);
             return false;
         }
     }
 
     async updateProfile(documentId, { name, bio, country, avatarId }) {
-        try {
-            return await this.databases.updateDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteProfilesCollectionId,
-                documentId,
-                { name, bio, country, avatarId }
-            );
-        } catch (error) {
-            console.log("Appwrite service :: updateProfile :: error", error);
-            return false;
-        }
+        // documentId is likely the profile id, but our backend uses the logged in user
+        return this.createProfile(null, { name, bio, country, avatarId });
     }
 
     async getProfiles(queries = []) {
         try {
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteProfilesCollectionId,
-                queries
-            );
+            const response = await axiosInstance.get('/users/profiles');
+            const docs = response.data.map(doc => {
+                const userName = doc.name || (doc.userId ? doc.userId.name : 'Unknown');
+                const finalUserId = doc.userId ? doc.userId._id || doc.userId : null;
+                return { ...doc, $id: doc._id, name: userName, userId: finalUserId };
+            });
+            return { documents: docs };
         } catch (error) {
-            console.log("Appwrite service :: getProfiles :: error", error);
-            return false;
+            console.log("Service :: getProfiles :: error", error);
+            return { documents: [] };
         }
     }
 
@@ -387,18 +272,8 @@ export class Service {
 
     async logActivity(userId, type, targetId, message) {
         try {
-            if (!conf.appwriteActivityCollectionId) return; // Silent fail if not setup
-            return await this.databases.createDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteActivityCollectionId,
-                ID.unique(),
-                {
-                    userId,
-                    type,
-                    targetId,
-                    message
-                }
-            );
+            const response = await axiosInstance.post('/activities', { userId, type, targetId, message });
+            return response.data;
         } catch (error) {
             console.log("Appwrite service :: logActivity :: error", error);
             return false;
@@ -407,15 +282,8 @@ export class Service {
 
     async getUserActivity(userId) {
         try {
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteActivityCollectionId,
-                [
-                    Query.equal("userId", userId),
-                    Query.orderDesc("$createdAt"),
-                    Query.limit(20)
-                ]
-            );
+            const response = await axiosInstance.get(`/activities/${userId}`);
+            return response.data;
         } catch (error) {
             console.log("Appwrite service :: getUserActivity :: error", error);
             return false;

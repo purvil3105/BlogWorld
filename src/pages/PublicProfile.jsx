@@ -57,12 +57,9 @@ export default function PublicProfile() {
         if (currentUserId === userId) return; // Can't follow self
         
         if (isFollowing) {
-            const followDoc = await appwriteService.isFollowing(currentUserId, userId);
-            if (followDoc) {
-                await appwriteService.unfollowUser(followDoc.$id);
-                setIsFollowing(false);
-                setFollowersCount(prev => prev - 1);
-            }
+            await appwriteService.unfollowUser(userId);
+            setIsFollowing(false);
+            setFollowersCount(prev => prev - 1);
         } else {
             const followerName = userData?.userData?.name || "Author";
             const followingName = profile?.name || "Author";

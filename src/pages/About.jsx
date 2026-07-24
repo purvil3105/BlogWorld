@@ -15,8 +15,8 @@ function About() {
                 ]);
                 
                 setStats({
-                    posts: postsData ? postsData.total : 0,
-                    authors: profilesData ? profilesData.total : 0
+                    posts: postsData && postsData.documents ? postsData.documents.length : 0,
+                    authors: profilesData && profilesData.documents ? profilesData.documents.length : 0
                 });
             } catch (error) {
                 console.error("Error fetching stats:", error);

@@ -163,11 +163,8 @@ export default function Post() {
         const targetUserId = post.userId;
         
         if (isFollowing) {
-            const followDoc = await appwriteService.isFollowing(currentUserId, targetUserId);
-            if (followDoc) {
-                await appwriteService.unfollowUser(followDoc.$id);
-                setIsFollowing(false);
-            }
+            await appwriteService.unfollowUser(targetUserId);
+            setIsFollowing(false);
         } else {
             const followerName = userData?.userData?.name || "Author";
             const followingName = post.authorName || "Author";

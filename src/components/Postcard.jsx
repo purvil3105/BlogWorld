@@ -3,9 +3,14 @@ import appwriteService from "../appwrite/config"
 import { Link } from 'react-router-dom'
 import UserAvatar from './UserAvatar'
 
-function Postcard({ $id, title, featuredimage, authorName, date, readTime, category, userId }) {
+function Postcard({ $id, slug, title, featuredimage, authorName, date, readTime, category, userId, createdAt, content }) {
+    const displayDate = date || (createdAt ? new Date(createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent');
+    const wordCount = content ? content.replace(/<[^>]*>?/gm, '').split(/\s+/).length : 0;
+    const calculatedReadTime = Math.ceil(wordCount / 200) + ' min read';
+    const displayReadTime = readTime || (wordCount > 0 ? calculatedReadTime : '6 min read');
+
     return (
-        <Link to={`/post/${$id}`} className="group block h-full">
+        <Link to={`/post/${slug || $id}`} className="group block h-full">
             <div className='w-full h-full bg-[var(--color-card-bg)] rounded-[24px] p-4 border border-[var(--color-border-light)] hover-lift flex flex-col'>
                 <div className='w-full aspect-[4/3] mb-5 rounded-2xl overflow-hidden relative image-zoom-container bg-[var(--color-primary-bg)]'>
                     {featuredimage ? (
@@ -28,7 +33,7 @@ function Postcard({ $id, title, featuredimage, authorName, date, readTime, categ
                             </div>
                             <span>{authorName || 'By Author'}</span>
                         </div>
-                        <span>{readTime || '6 min read'} &middot; {date || 'Recent'}</span>
+                        <span>{displayReadTime} &middot; {displayDate}</span>
                     </div>
                 </div>
             </div>
